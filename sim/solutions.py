@@ -1,7 +1,7 @@
 ﻿"""Stage 2: alert -> solutions -> try -> compare.
 
 The alert comes from the forecast model; each solution is tested by simulation on the same seeds and
-the same arrival sequence as "before". Settings were fixed in CLAUDE.md before any result.
+the same arrival sequence as "before". Settings were fixed before any result.
 Usage: python sim/solutions.py check   (one run of the extra gate, wall check)
        python sim/solutions.py         (all levels x 8 seeds x 6 variants, then the web files)
 """
