@@ -1,0 +1,99 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Nasaq{% endblock %}</title>
+  <meta name="description" content="Nasaq rehearses crowds at an Expo gate: it simulates visitors, forecasts congestion at each door 10 seconds ahead and compares routing decisions before they are applied.">
+  <script>
+    // before first paint: saved theme and language (URL ?lang= wins), so nothing flashes
+    (function () {
+      var d = document.documentElement, th = null, lang = null;
+      try { th = localStorage.getItem("nasaq-theme"); lang = localStorage.getItem("nasaq-lang"); } catch (e) {}
+      var q = new URLSearchParams(location.search).get("lang");
+      if (q === "ar" || q === "en") lang = q;
+      if (th === "light" || th === "dark") d.dataset.theme = th;
+      if (lang === "ar") { d.lang = "ar"; d.dir = "rtl"; }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Almarai:wght@400;700;800&family=Noto+Naskh+Arabic:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'dashboard/style.css' %}">
+</head>
+<body class="page-{{ page }}">
+  <!-- Icons: shapes from Lucide (ISC licence), drawn inline so the page has no extra dependency -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 3l14 9-14 9z"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+      <symbol id="i-trend" viewBox="0 0 24 24"><path d="M22 7l-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+      <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/></symbol>
+      <symbol id="i-nav" viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8z"/></symbol>
+      <symbol id="i-split" viewBox="0 0 24 24"><path d="M16 3h5v5M8 3H3v5M12 22v-8.3a4 4 0 0 0-1.17-2.87L3 3M15 9l6-6"/></symbol>
+      <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9.94 15.5a2 2 0 0 0-1.44-1.44l-6.13-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0l1.58 6.14a2 2 0 0 0 1.44 1.44l6.13 1.58a.5.5 0 0 1 0 .96l-6.13 1.58a2 2 0 0 0-1.44 1.44l-1.58 6.13a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4"/></symbol>
+      <symbol id="i-door" viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/><path d="M13 4.56v16.16a1 1 0 0 1-1.24.97L5 20V5.56a2 2 0 0 1 1.52-1.94l4-1A2 2 0 0 1 13 4.56z"/></symbol>
+      <symbol id="i-doors" viewBox="0 0 24 24"><path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14M2 20h20M14 12v.01"/></symbol>
+      <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></symbol>
+      <symbol id="i-watch" viewBox="0 0 24 24"><path d="M21.73 18l-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3M12 9v4M12 17h.01"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86zM12 8v4M12 16h.01"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+      <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+      <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5M3 12a9 3 0 0 0 18 0"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+      <symbol id="i-scale" viewBox="0 0 24 24"><path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1ZM2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1ZM7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+      <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+      <!-- the Nasaq mark: two gate posts, visitors passing between them, forming an N -->
+      <symbol id="mark" viewBox="0 0 40 40">
+        <rect style="fill:var(--mk-bg)" width="40" height="40" rx="11"/>
+        <rect style="fill:var(--mk-post)" x="8.5" y="9" width="5" height="22" rx="2.5"/>
+        <rect style="fill:var(--mk-post)" x="26.5" y="9" width="5" height="22" rx="2.5"/>
+        <circle style="fill:var(--mk-dot)" cx="15.6" cy="13.2" r="2" opacity=".5"/>
+        <circle style="fill:var(--mk-dot)" cx="20" cy="20" r="2.5" opacity=".78"/>
+        <circle style="fill:var(--mk-dot)" cx="24.4" cy="26.8" r="3"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+  <header class="top">
+    <a class="brand" href="{% url 'home' %}" aria-label="Nasaq">
+      <svg class="mark" aria-hidden="true"><use href="#mark"/></svg>
+      <span class="wordmark" data-i18n="brand">Nasaq</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="{% url 'home' %}"{% if page == "console" %} class="is-active" aria-current="page"{% endif %}><svg class="ico" aria-hidden="true"><use href="#i-monitor"/></svg><span data-i18n="navConsole">Console</span></a>
+      <a href="{% url 'about' %}"{% if page == "about" %} class="is-active" aria-current="page"{% endif %}><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg><span data-i18n="navAbout">How it works</span></a>
+  <a href="{% url 'team' %}"{% if page == "team" %} class="is-active" aria-current="page"{% endif %}><svg class="ico" aria-hidden="true"><use href="#i-users"/></svg><span data-i18n="navTeam">About us</span></a>
+    </nav>
+    <div class="top-actions">
+      <button id="theme" class="btn btn-ghost btn-icon" type="button" aria-label="Toggle theme"><svg class="ico" aria-hidden="true"><use href="#i-moon"/></svg></button>
+      <button id="lang" class="btn btn-ghost" type="button" aria-label="Switch language" lang="ar"><svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg><span id="lang-txt">عربي</span></button>
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <footer class="foot">
+    <div class="foot-in">
+      <div class="foot-brand">
+        <svg class="mark" aria-hidden="true"><use href="#mark"/></svg>
+        <p data-i18n="footNote">A prototype for the Expo 2030 Riyadh challenge at Tuwaiq Academy (track 3, challenge 3.1). Not an official Expo tool.</p>
+      </div>
+      <p class="foot-credit" data-i18n="credit">Simulation: JuPedSim 1.4.2 (Forschungszentrum Jülich). Forecast: scikit-learn.</p>
+    </div>
+  </footer>
+
+  <script>window.DATA_URL = "{% static '' %}";</script>
+  <script src="{% static 'dashboard/site.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

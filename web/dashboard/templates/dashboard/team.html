@@ -1,0 +1,87 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}About us · Nasaq{% endblock %}
+{% block content %}
+<main id="main" class="about team">
+
+  <section class="sec" id="who" aria-labelledby="who-h">
+    <div class="sec-head">
+      <h1 id="who-h" class="sec-h" data-i18n="whoH">About us</h1>
+      <p class="sec-sub" data-i18n="whoSub">A team of two students in the web development bootcamp at Tuwaiq Academy.</p>
+    </div>
+    <p class="team-lede" data-i18n="whoP">We built Nasaq for the Expo 2030 Riyadh challenge at Tuwaiq Academy, track 3 (Operations, Safety and Security), challenge 3.1: helping the site operations team detect congestion early enough to act.</p>
+  </section>
+
+  <section class="sec split" id="why" aria-labelledby="why-h">
+    <h2 id="why-h" class="sec-h" data-i18n="whyH">Why we built it</h2>
+    <div class="sec-body">
+      <p data-i18n="whyP1">When thousands of visitors move at the same time, a count of who is at a gate right now arrives too late. We wanted a tool that warns before the crowd forms, and a safe place to try a decision before applying it to real people.</p>
+      <p data-i18n="whyP2">We came from web development, with no prior experience in machine learning or crowd simulation. We learned both while building this project.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="principles" aria-labelledby="pr-h">
+    <div class="sec-head">
+      <h2 id="pr-h" class="sec-h" data-i18n="prH">How we work</h2>
+      <p class="sec-sub" data-i18n="prSub">The rules we followed for every result on this site.</p>
+    </div>
+    <ol class="principles">
+      <li><h3 data-i18n="pr1h">Settings first, results second</h3><p data-i18n="pr1">We wrote down each test's settings before running it, and did not change them after seeing the result.</p></li>
+      <li><h3 data-i18n="pr2h">Failures are shown</h3><p data-i18n="pr2">When the model lost to a simple method, the page says so.</p></li>
+      <li><h3 data-i18n="pr3h">Every number from a file</h3><p data-i18n="pr3">The result numbers on this site are read from our result files, not typed by hand.</p></li>
+      <li><h3 data-i18n="pr4h">Simulated or real, always labelled</h3><p data-i18n="pr4">Each result says whether it comes from our simulator or from real data.</p></li>
+      <li><h3 data-i18n="pr5h">Assumptions in the open</h3><p data-i18n="pr5">Every value we did not measure is listed as an assumption on the console page.</p></li>
+    </ol>
+  </section>
+
+  <section class="sec split" id="status" aria-labelledby="st-h">
+    <h2 id="st-h" class="sec-h" data-i18n="stH">What this site is, and is not</h2>
+    <ul class="plain">
+      <li data-i18n="st1">A competition prototype, not an official tool of Expo 2030 Riyadh or any authority.</li>
+      <li data-i18n="st2">It runs on a small test layout, not on the real Expo site, and is not connected to live data.</li>
+      <li data-i18n="st3">It collects no data about its visitors. Your choices (language, theme, scenario) stay in your own browser; fonts load from Google Fonts.</li>
+    </ul>
+  </section>
+
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+Nasaq.init({
+  en: {
+    whoH: "About us", whoSub: "A team of two students in the web development bootcamp at Tuwaiq Academy.",
+    whoP: "We built Nasaq for the Expo 2030 Riyadh challenge at Tuwaiq Academy, track 3 (Operations, Safety and Security), challenge 3.1: helping the site operations team detect congestion early enough to act.",
+    whyH: "Why we built it",
+    whyP1: "When thousands of visitors move at the same time, a count of who is at a gate right now arrives too late. We wanted a tool that warns before the crowd forms, and a safe place to try a decision before applying it to real people.",
+    whyP2: "We came from web development, with no prior experience in machine learning or crowd simulation. We learned both while building this project.",
+    prH: "How we work", prSub: "The rules we followed for every result on this site.",
+    pr1h: "Settings first, results second", pr1: "We wrote down each test's settings before running it, and did not change them after seeing the result.",
+    pr2h: "Failures are shown", pr2: "When the model lost to a simple method, the page says so.",
+    pr3h: "Every number from a file", pr3: "The result numbers on this site are read from our result files, not typed by hand.",
+    pr4h: "Simulated or real, always labelled", pr4: "Each result says whether it comes from our simulator or from real data.",
+    pr5h: "Assumptions in the open", pr5: "Every value we did not measure is listed as an assumption on the console page.",
+    stH: "What this site is, and is not",
+    st1: "A competition prototype, not an official tool of Expo 2030 Riyadh or any authority.",
+    st2: "It runs on a small test layout, not on the real Expo site, and is not connected to live data.",
+    st3: "It collects no data about its visitors. Your choices (language, theme, scenario) stay in your own browser; fonts load from Google Fonts.",
+  },
+  ar: {
+    whoH: "من نحن", whoSub: "فريق من طالبين في معسكر تطوير الويب بأكاديمية طويق.",
+    whoP: "بنينا نَسَق لتحدي إكسبو 2030 الرياض في أكاديمية طويق، المسار 3 (العمليات والسلامة والأمن)، التحدي 3.1: مساعدة فريق عمليات الموقع على اكتشاف الازدحام مبكرًا بما يكفي للتصرف.",
+    whyH: "لماذا بنيناه",
+    whyP1: "عندما يتحرك آلاف الزوار في الوقت نفسه، يصل عدد الموجودين عند البوابة الآن متأخرًا. أردنا أداة تنبّه قبل أن يتكوّن الزحام، ومكانًا آمنًا لتجربة القرار قبل تطبيقه على الناس.",
+    whyP2: "جئنا من تطوير الويب، بلا خبرة سابقة في التعلّم الآلي أو محاكاة الحشود، وتعلّمنا الاثنين أثناء بناء هذا المشروع.",
+    prH: "كيف نعمل", prSub: "القواعد التي التزمنا بها في كل نتيجة على هذا الموقع.",
+    pr1h: "الإعدادات أولًا، ثم النتائج", pr1: "كتبنا إعدادات كل اختبار قبل تشغيله، ولم نغيّرها بعد رؤية النتيجة.",
+    pr2h: "نعرض ما فشل", pr2: "عندما خسر النموذج أمام طريقة بسيطة، تقول الصفحة ذلك.",
+    pr3h: "كل رقم من ملف", pr3: "أرقام النتائج في الموقع تُقرأ من ملفات نتائجنا، ولا تُكتب يدويًا.",
+    pr4h: "محاكاة أم حقيقي؟ دائمًا مكتوب", pr4: "كل نتيجة تذكر هل جاءت من المحاكي أم من بيانات حقيقية.",
+    pr5h: "الافتراضات معلنة", pr5: "كل قيمة لم نقِسها مذكورة كافتراض في لوحة المراقبة.",
+    stH: "ما هذا الموقع، وما ليس هو",
+    st1: "نموذج أولي للمسابقة، وليس أداة رسمية لإكسبو 2030 الرياض أو لأي جهة.",
+    st2: "يعمل على تصميم تجريبي صغير، لا على موقع إكسبو الحقيقي، وغير متصل ببيانات حية.",
+    st3: "لا يجمع أي بيانات عن زواره. اختياراتك (اللغة، والوضع، والسيناريو) تُحفظ في متصفحك فقط، والخطوط تُحمّل من Google Fonts.",
+  },
+});
+</script>
+{% endblock %}

@@ -1,0 +1,230 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Console · Nasaq{% endblock %}
+{% block content %}
+  <div class="shell">
+    <aside class="side" aria-label="Controls">
+      <fieldset>
+        <legend data-i18n="scenario">السيناريو</legend>
+        <label class="opt"><input type="radio" name="scenario" value="normal" checked><svg class="opt-ico" aria-hidden="true"><use href="#i-users"/></svg><span><b data-i18n="sc_normal">زحام عند البوابة</b><small data-i18n="sc_normal_d">الزوار يصلون تباعًا بالمستوى الذي تختاره، والجميع يتبع اللوحات إلى البوابة الرئيسية.</small></span></label>
+        <label class="opt"><input type="radio" name="scenario" value="fire"><svg class="opt-ico" aria-hidden="true"><use href="#i-alert"/></svg><span><b data-i18n="sc_fire">حريق وإخلاء</b><small data-i18n="sc_fire_d">إخلاء غرفة الدخول، وعند الثانية 30 تُغلق منطقة خلف البوابة الرئيسية.</small></span></label>
+        <label class="opt"><input type="radio" name="scenario" value="closed"><svg class="opt-ico" aria-hidden="true"><use href="#i-ban"/></svg><span><b data-i18n="sc_closed">باب مغلق</b><small data-i18n="sc_closed_d">40 شخصًا يخرجون وأحد البابين غير متاح (مسار مقطوع).</small></span></label>
+      </fieldset>
+
+      <fieldset id="level-set">
+        <legend data-i18n="level">عدد الزوار</legend>
+        <label class="opt"><input type="radio" name="level" value="low"><span><b data-i18n="lv_low">منخفض</b><small data-lv="low"></small></span></label>
+        <label class="opt"><input type="radio" name="level" value="medium" checked><span><b data-i18n="lv_medium">متوسط</b><small data-lv="medium"></small></span></label>
+        <label class="opt"><input type="radio" name="level" value="peak"><span><b data-i18n="lv_peak">ذروة</b><small data-lv="peak"></small></span></label>
+        <p class="hint" data-i18n="lvNote">منطقة تجريبية صغيرة؛ هذه ليست أرقام زوار إكسبو.</p>
+      </fieldset>
+
+      <fieldset id="fire-set" hidden>
+        <legend data-i18n="fireCase">الحالة</legend>
+        <label class="opt"><input type="radio" name="fire" value="closure" checked><span><b data-i18n="f_closure">مع إغلاق المنطقة</b></span></label>
+        <label class="opt"><input type="radio" name="fire" value="no_closure"><span><b data-i18n="f_noclosure">دون إغلاق (للمقارنة)</b></span></label>
+        <p class="hint" data-i18n="fireNote">نحاكي أن المنطقة صارت غير متاحة فقط؛ لا نحاكي انتشار النار أو الدخان، وهذه ليست شهادة سلامة إخلاء.</p>
+      </fieldset>
+
+      <fieldset id="door-set" hidden>
+        <legend data-i18n="doors">الأبواب</legend>
+        <label class="opt"><input type="radio" name="doors" value="one" checked><svg class="opt-ico" aria-hidden="true"><use href="#i-doors"/></svg><span><b data-i18n="d_one">باب واحد مغلق</b></span></label>
+        <label class="opt"><input type="radio" name="doors" value="two"><svg class="opt-ico" aria-hidden="true"><use href="#i-door"/></svg><span><b data-i18n="d_two">البابان مفتوحان (للمقارنة)</b></span></label>
+      </fieldset>
+    </aside>
+
+    <main id="main">
+      <div class="stage">
+      <canvas id="flowbg" class="flowbg" aria-hidden="true"></canvas>
+      <header class="page-head">
+        <h1 data-i18n="h1">أين ستزدحم البوابة بعد 10 ثوانٍ، وما الحل؟</h1>
+        <p class="lede" data-i18n="lede">اختر مستوى الزوار، وشاهد الحشد يتحرك، واقرأ الإنذار، ثم قارن الحلول قبل وبعد.</p>
+      </header>
+      <aside class="intro" id="intro" aria-labelledby="intro-h" hidden>
+        <h2 id="intro-h" data-i18n="introH">New here? Read the console in three steps</h2>
+        <ol>
+          <li><b data-i18n="intro1h">Choose a situation</b><span data-i18n="intro1"></span></li>
+          <li><b data-i18n="intro2h">Watch the replay and the warning</b><span data-i18n="intro2"></span></li>
+          <li><b data-i18n="intro3h">Compare the solutions</b><span data-i18n="intro3"></span></li>
+        </ol>
+        <div class="intro-actions">
+          <a class="btn btn-light" href="{% url 'about' %}" data-i18n="introMore">How the system works</a>
+          <button class="btn btn-quiet" id="intro-close" type="button"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg><span data-i18n="introClose">Got it</span></button>
+        </div>
+      </aside>
+
+      <section id="console" class="console" aria-labelledby="zone-h">
+        <div class="replay">
+          <div class="replay-head">
+            <h2 id="zone-h" data-i18n="zoneH">منطقة البوابة الغربية</h2>
+            <span class="sim-tag" data-i18n="simTag">إعادة تشغيل محاكاة، وليست بثًا مباشرًا</span>
+          </div>
+          <dl class="stats">
+            <div><dt id="k0-l"></dt><dd id="k0">–</dd></div>
+            <div><dt id="k1-l"></dt><dd id="k1">–</dd></div>
+            <div><dt id="k2-l"></dt><dd id="k2">–</dd></div>
+            <div><dt id="k3-l"></dt><dd id="k3">–</dd></div>
+          </dl>
+          <p class="run-meta" id="run-meta" role="status"></p>
+          <p class="alert-bar" id="alert-bar" role="status" hidden></p>
+          <div class="viewfinder">
+            <canvas id="cv" width="1000" height="520" aria-label="Crowd replay"></canvas>
+          </div>
+          <div class="player">
+            <button type="button" class="btn btn-primary play play-btn"><svg class="ico" aria-hidden="true"><use href="#i-pause"/></svg><span class="play-txt">إيقاف</span></button>
+            <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Time">
+            <output id="clock">0 s</output>
+            <select id="speed" class="select" aria-label="Speed">
+              <option value="2">2×</option>
+              <option value="4" selected>4×</option>
+              <option value="8">8×</option>
+            </select>
+          </div>
+          <div class="legend-row" id="replay-legend"></div>
+          <p class="hint" id="dens-note"></p>
+        </div>
+
+        <div class="warn" aria-live="polite">
+          <h2><span data-i18n="warnH">إنذار مبكر</span><span class="live" aria-hidden="true"></span></h2>
+          <p class="warn-sub" data-i18n="warnSub">عدد الأشخاص أمام كل بوابة، الآن وبعد 10 ثوانٍ.</p>
+          <div id="doors"></div>
+          <p class="empty" id="warn-none" hidden data-i18n="warnNone"></p>
+          <p class="accuracy" id="accuracy"></p>
+          <p class="hint" id="thr"></p>
+        </div>
+      </section>
+      </div>
+
+      <section id="solutions" class="block" aria-labelledby="sol-h">
+        <div class="block-head">
+          <h2 id="sol-h" data-i18n="solH">الحلول بعد الإنذار</h2>
+          <p class="sol-note" id="sol-note"></p>
+        </div>
+        <p class="res-sub" id="sol-sub"></p>
+        <div class="sol-grid" id="sol-cards"></div>
+      </section>
+
+      <section id="compare" class="block compare" aria-labelledby="cmp-h" hidden>
+        <div class="block-head">
+          <h2 id="cmp-h"></h2>
+          <button class="btn btn-quiet" id="cmp-close" type="button"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg><span data-i18n="cmpClose">إغلاق المقارنة</span></button>
+        </div>
+        <p class="res-sub" id="cmp-sub"></p>
+        <div class="cmp-grid">
+          <figure><figcaption data-i18n="before">قبل (بدون حل)</figcaption><canvas id="cv-before" width="1000" height="520"></canvas></figure>
+          <figure><figcaption id="cmp-after-h"></figcaption><canvas id="cv-after" width="1000" height="520"></canvas></figure>
+        </div>
+        <div class="player">
+          <button type="button" class="btn btn-primary play play-btn"><svg class="ico" aria-hidden="true"><use href="#i-pause"/></svg><span class="play-txt">إيقاف</span></button>
+          <input id="cmp-scrub" type="range" min="0" max="1000" value="0" aria-label="Time">
+          <output id="cmp-clock">0 s</output>
+          <select id="cmp-speed" class="select" aria-label="Speed">
+            <option value="2">2×</option>
+            <option value="4" selected>4×</option>
+            <option value="8">8×</option>
+          </select>
+        </div>
+        <div class="table-wrap"><table id="cmp-table"></table></div>
+      </section>
+
+      <section id="results" class="block" aria-labelledby="res-h" hidden>
+        <div class="block-head">
+          <h2 id="res-h" data-i18n="resH">النتائج على عدة تشغيلات</h2>
+          <p class="res-sub" id="res-sub"></p>
+        </div>
+        <div class="results-grid">
+          <div class="table-wrap"><table id="res-table"></table></div>
+          <p class="finding" id="finding"></p>
+        </div>
+      </section>
+
+      <section id="aicard" class="block" aria-labelledby="ai-h">
+        <h2 id="ai-h" data-i18n="aiH">على أي أساس يتوقع الذكاء الاصطناعي؟</h2>
+        <div class="ai-grid" id="ai-grid"></div>
+      </section>
+
+      <section id="calib" class="block" aria-labelledby="cal-h">
+        <div class="block-head">
+          <h2 id="cal-h" data-i18n="calH">التحقق من المحاكي ببيانات حقيقية</h2>
+          <p class="res-sub" id="cal-src"></p>
+        </div>
+        <p class="os-lede" id="cal-lede"></p>
+        <div class="results-grid">
+          <div class="table-wrap"><table id="cal-table"></table></div>
+          <p class="finding" id="cal-finding"></p>
+        </div>
+        <ul class="os-limits" id="cal-limits"></ul>
+      </section>
+
+      <section id="site" class="block site" aria-labelledby="site-h">
+        <div class="site-text">
+          <h2 id="site-h" data-i18n="siteH">أين تقع هذه المنطقة</h2>
+          <p data-i18n="mapNote"></p>
+          <ul class="map-key">
+            <li><i class="k-flow"></i><span data-i18n="keyFlow">تدفق الزوار نحو البوابة الغربية</span></li>
+            <li><i class="k-gate"></i><span data-i18n="keyGate">البوابة المُحاكاة</span></li>
+            <li><i class="k-other"></i><span data-i18n="keyOther">بوابات أخرى (غير مُحاكاة)</span></li>
+          </ul>
+        </div>
+        <figure class="map">
+          <svg id="site-map" dir="ltr" viewBox="0 0 880 560" role="img" aria-labelledby="map-title">
+            <title id="map-title">Illustrative site sketch</title>
+            <path class="site-ground" d="M220,90 C320,45 560,45 660,90 C745,128 770,250 735,355 C700,440 560,470 460,466 C340,463 210,445 175,355 C140,265 140,135 220,90Z"/>
+            <path class="site-spine" d="M151,240 C260,240 330,255 440,262 C560,268 650,255 758,250 M440,56 C440,140 445,200 440,262 C436,330 450,400 460,466"/>
+            <circle class="plaza" cx="440" cy="262" r="58"/>
+            <path class="district" d="M260,130 C320,105 380,112 392,160 C402,205 350,222 300,215 C250,208 220,160 260,130Z"/>
+            <path class="district" d="M500,150 C540,108 640,112 655,160 C668,205 600,225 555,215 C505,205 470,185 500,150Z"/>
+            <path class="district" d="M300,320 C340,300 390,315 395,355 C400,400 340,420 300,405 C255,390 255,342 300,320Z"/>
+            <path class="district" d="M510,330 C560,305 640,318 645,360 C650,400 590,425 545,410 C500,395 470,352 510,330Z"/>
+            <text class="map-label" x="440" y="267" data-i18n="plaza">الساحة المركزية</text>
+            <text class="map-label soft" x="315" y="170" data-i18n="pavilions">أجنحة</text>
+            <text class="map-label soft" x="575" y="170" data-i18n="pavilions">أجنحة</text>
+            <text class="map-label soft" x="330" y="368" data-i18n="pavilions">أجنحة</text>
+            <text class="map-label soft" x="575" y="372" data-i18n="pavilions">أجنحة</text>
+
+            <g class="flows" id="flows">
+              <path class="flow" d="M78,215 C110,222 130,232 151,240"/>
+              <path class="flow" d="M78,240 C105,240 128,240 151,240"/>
+              <path class="flow" d="M78,265 C110,258 130,248 151,240"/>
+              <path class="flow surge-only" d="M78,228 C110,232 130,236 151,240"/>
+              <path class="flow surge-only" d="M78,252 C110,248 130,244 151,240"/>
+              <path class="flow calm" d="M460,535 C460,515 460,490 460,466"/>
+              <path class="flow calm" d="M820,250 C800,250 780,250 758,250"/>
+            </g>
+
+            <g class="hub"><rect x="22" y="205" width="56" height="70" rx="10"/><text x="50" y="295" data-i18n="metro">مترو</text></g>
+            <g class="hub"><rect x="425" y="535" width="70" height="20" rx="8"/><text x="510" y="550" class="start" data-i18n="bus">حافلات</text></g>
+            <g class="hub"><rect x="820" y="220" width="44" height="60" rx="8"/><text x="842" y="298" data-i18n="parking">مواقف</text></g>
+
+            <g class="gate other" data-gate="north"><circle cx="440" cy="56" r="11"/><text x="440" y="34" data-i18n="gateN">بوابة شمالية</text></g>
+            <g class="gate other" data-gate="east"><circle cx="758" cy="250" r="11"/><text x="758" y="226" data-i18n="gateE">بوابة شرقية</text></g>
+            <g class="gate other" data-gate="south"><circle cx="460" cy="466" r="11"/><text x="400" y="500" data-i18n="gateS">بوابة جنوبية</text></g>
+            <a href="#console" class="gate modeled" id="gate-west" aria-describedby="gate-west-note">
+              <circle class="halo" cx="151" cy="240" r="24"/>
+              <circle cx="151" cy="240" r="13"/>
+              <text x="160" y="196" data-i18n="gateW">البوابة الغربية</text>
+              <text x="160" y="214" class="small" id="gate-west-note" data-i18n="gateWnote">المنطقة المُحاكاة</text>
+            </a>
+          </svg>
+        </figure>
+      </section>
+
+      <section id="assumptions" class="block limits" aria-labelledby="asm-h">
+        <h2 id="asm-h" data-i18n="asmH">افتراضات</h2>
+        <p class="res-sub" data-i18n="asmSub">قيم لم نقِسها؛ اخترناها نحن أو هي قيم المحاكي الافتراضية.</p>
+        <ul id="asm-list"></ul>
+      </section>
+
+      <section id="limits" class="block limits" aria-labelledby="lim-h">
+        <h2 id="lim-h" data-i18n="limH">حدود صادقة</h2>
+        <ul>
+          <li data-i18n="lim1"></li>
+          <li data-i18n="lim2"></li>
+          <li data-i18n="lim3"></li>
+          <li data-i18n="lim4"></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'dashboard/app.js' %}"></script>{% endblock %}

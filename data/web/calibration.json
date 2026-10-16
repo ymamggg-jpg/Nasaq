@@ -1,0 +1,1 @@
+{"rows":[{"n":60,"real":1.9,"sim":0.98,"sim_min":0.94,"sim_max":1.01,"diff_pct":-48.5},{"n":40,"real":2.08,"sim":1.03,"sim_min":0.97,"sim_max":1.07,"diff_pct":-50.5},{"n":20,"real":2.19,"sim":1.01,"sim_min":0.93,"sim_max":1.13,"diff_pct":-53.9}],"seeds":5,"width":1.0,"length":2.8,"rho":3.3,"source":"Seyfried et al. 2007, arXiv:physics/0702004, Table 2"}

@@ -1,0 +1,130 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}How it works · Nasaq{% endblock %}
+{% block content %}
+<main id="main" class="about">
+
+  <section class="stage hero" aria-labelledby="hero-h">
+    <div class="hero-text">
+      <h1 id="hero-h" data-i18n="heroH">Rehearse the crowd before the gates open.</h1>
+      <p class="lede" data-i18n="heroP">Nasaq simulates visitors at an Expo gate, forecasts the crowd at each door 10 seconds ahead, and lets an operations team test a decision, such as closing a route, before applying it.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="{% url 'home' %}"><svg class="ico" aria-hidden="true"><use href="#i-monitor"/></svg><span data-i18n="ctaConsole">Open the console</span></a>
+        <a class="btn btn-light btn-lg" href="#findings" data-i18n="ctaResults">See what we found</a>
+      </div>
+      <p class="hero-note" data-i18n="heroNote">Built and tested inside a crowd simulator. Not connected to live Expo data.</p>
+    </div>
+    <div class="globe-wrap" aria-hidden="true">
+      <canvas id="globe" class="globe"></canvas>
+    </div>
+  </section>
+
+  <section class="sec split" id="problem" aria-labelledby="problem-h">
+    <h2 id="problem-h" class="sec-h" data-i18n="probH">The problem</h2>
+    <div class="sec-body">
+      <blockquote class="quote">
+        <p data-i18n="probQuote">“The site operations team struggles to detect congestion early enough to act, when thousands of visitors move between gates, sites, transport points and public spaces at the same time.”</p>
+        <cite data-i18n="probCite">Challenge 3.1, Operations, Safety and Security track</cite>
+      </blockquote>
+      <p data-i18n="probP">A count of who is at a door right now arrives too late: by the time a door looks full, the queue behind it is already forming. Nasaq looks ahead instead, and gives the team a safe place to try a decision first.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="findings" aria-labelledby="find-h">
+    <div class="sec-head">
+      <h2 id="find-h" class="sec-h" data-i18n="findH">What we found</h2>
+      <p class="sec-sub" data-i18n="findSub">All results come from our own simulation runs on a test layout. Each is the mean over several runs the model never trained on.</p>
+    </div>
+    <ol class="findings" id="findings-list"></ol>
+  </section>
+
+  <section class="sec" id="realdata" aria-labelledby="real-h">
+    <div class="sec-head">
+      <h2 id="real-h" class="sec-h" data-i18n="realH">Which data is real?</h2>
+      <p class="sec-sub" data-i18n="realSub">Simulated and real data are kept apart, and every result says which one it uses.</p>
+    </div>
+    <div class="table-wrap"><table id="real-table"></table></div>
+  </section>
+
+  <section class="sec" id="pipeline" aria-labelledby="pipe-h">
+    <div class="sec-head">
+      <h2 id="pipe-h" class="sec-h" data-i18n="pipeH">How the system works</h2>
+      <p class="sec-sub" data-i18n="pipeSub">Six stages, from a layout to a decision. Select a stage to see what it does and which stages it feeds.</p>
+    </div>
+    <div class="orbit-wrap">
+      <div class="orbit" id="orbit">
+        <div class="orbit-ring" aria-hidden="true"></div>
+        <div class="orbit-hub" aria-hidden="true"><svg class="mark"><use href="#mark"/></svg></div>
+        <div class="orbit-nodes" id="orbit-nodes" role="group" aria-label="Stages"></div>
+      </div>
+      <div class="stage-card" id="stage-card" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="scenarios" aria-labelledby="sc-h">
+    <div class="sec-head">
+      <h2 id="sc-h" class="sec-h" data-i18n="scH">Three situations to rehearse</h2>
+      <p class="sec-sub" data-i18n="scSub">Each one opens in the console with its recorded run.</p>
+    </div>
+    <div class="scen">
+      <a class="scen-item" href="{% url 'home' %}?scenario=normal&level=peak">
+        <svg class="ico" aria-hidden="true"><use href="#i-users"/></svg>
+        <h3 data-i18n="sc1h">Crowd at the gate</h3>
+        <p data-i18n="sc1">Visitors keep arriving at a low, medium or peak level. The model raises an alert, and you compare the tested solutions before and after.</p>
+        <span class="scen-go" data-i18n="openConsole">Open in console</span>
+      </a>
+      <a class="scen-item" href="{% url 'home' %}?scenario=fire">
+        <svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
+        <h3 data-i18n="sc2h">Fire and evacuation</h3>
+        <p data-i18n="sc2">During an evacuation an area behind the main gate becomes unavailable at 30 seconds, and people are sent to the side gate.</p>
+        <span class="scen-go" data-i18n="openConsole">Open in console</span>
+      </a>
+      <a class="scen-item" href="{% url 'home' %}?scenario=closed">
+        <svg class="ico" aria-hidden="true"><use href="#i-ban"/></svg>
+        <h3 data-i18n="sc3h">Closed door</h3>
+        <p data-i18n="sc3">40 people leave while one of the two doors is unavailable, for example a blocked route.</p>
+        <span class="scen-go" data-i18n="openConsole">Open in console</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="sec" id="tech" aria-labelledby="tech-h">
+    <div class="sec-head"><h2 id="tech-h" class="sec-h" data-i18n="techH">What it is built with</h2></div>
+    <dl class="tech">
+      <div><dt>JuPedSim 1.4.2</dt><dd data-i18n="tech1">Open pedestrian simulator from Forschungszentrum Jülich. Moves every visitor with the Collision-Free Speed Model.</dd></div>
+      <div><dt>scikit-learn</dt><dd data-i18n="tech2">Gradient-boosting model that forecasts the crowd at each door 10 seconds ahead.</dd></div>
+      <div><dt>pandas</dt><dd data-i18n="tech3">Turns recorded runs into training data and results tables.</dd></div>
+      <div><dt>Django · JavaScript</dt><dd data-i18n="tech4">This site. Every run is precomputed, so the console needs no live simulation.</dd></div>
+      <div><dt>Seyfried et al. 2007</dt><dd data-i18n="tech6">A real bottleneck experiment from Jülich, used to check the simulator.</dd></div>
+    </dl>
+  </section>
+
+  <section class="sec split" id="limits" aria-labelledby="lim2-h">
+    <div>
+      <h2 id="lim2-h" class="sec-h" data-i18n="limH">Honest limits</h2>
+      <ul class="plain">
+        <li data-i18n="lim1">The layout is a test layout (two rooms, two doors, one exit), not the Expo site.</li>
+        <li data-i18n="lim2">The model is trained on our own simulations, so results show the method works inside the simulator, not on real crowds.</li>
+        <li data-i18n="lim3">Door capacity in the routing rule is an assumption (1.3 persons/s per metre); we tried 1.0 and 1.6 and the conclusion did not change.</li>
+        <li data-i18n="lim4">We do not model fire or smoke, and this is not a certified evacuation plan.</li>
+        <li data-i18n="lim5">Response time, steward compliance, density limits and visitor levels are our assumptions.</li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="sec-h" data-i18n="nextH">What comes next</h2>
+      <ul class="plain">
+        <li data-i18n="next1">Feed the forecast with real gate counters and sensors.</li>
+        <li data-i18n="next2">Model the real site layout once an operational map is available.</li>
+        <li data-i18n="next3">Train the gate warning on recorded crowd data, not only on simulations.</li>
+        <li data-i18n="next4">Calibrate the simulator to the measured real flow, then repeat the tests.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <h2 data-i18n="ctaH">See it run.</h2>
+    <a class="btn btn-primary btn-lg" href="{% url 'home' %}"><svg class="ico" aria-hidden="true"><use href="#i-monitor"/></svg><span data-i18n="ctaConsole">Open the console</span></a>
+  </section>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{% static 'dashboard/about.js' %}"></script>{% endblock %}
