@@ -1,4 +1,4 @@
-﻿"""Stage 4: an area becomes unavailable during an evacuation (settings fixed in CLAUDE.md first).
+﻿"""Stage 4: an area becomes unavailable during an evacuation (settings fixed before running).
 
 We only simulate that the area becomes unavailable; we do not simulate fire or smoke spread,
 and this is not an evacuation safety certificate.
