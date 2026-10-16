@@ -20,8 +20,8 @@ A web page for an operations officer: watch a recorded crowd at a gate, get an e
 Needs Python 3.14 and Git.
 
 ```powershell
-git clone <repo-url>
-cd ghost-crowd
+git clone https://github.com/ymamggg-jpg/Nasaq.git
+cd Nasaq  
 py -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 ```
@@ -61,7 +61,7 @@ The fonts load from Google Fonts; without internet the page falls back to system
 
 ## Rerun the experiments (optional)
 
-Each script writes to `data/` and can be run from any folder. Settings for stages 2–4 were written in `CLAUDE.md` before running.
+Each script writes to `data/` and can be run from any folder. Settings for stages 2–4 were written down before running.
 
 | command | output | time |
 |---|---|---|
