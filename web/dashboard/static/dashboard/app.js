@@ -540,7 +540,7 @@ function renderSolutions() {
   }
   $("#sol-sub").textContent = L.solSub(n, lv.alerts);
   const vs = Object.keys(lv.variants).filter((v) => v !== "before")
-    // rank: fewest people not out first, then average total time (changed after seeing results, see CLAUDE.md)
+    // rank: fewest people not out first, then average total time (changed after seeing results )
     .sort((a, b) => (lv.variants[a].metrics.not_out.mean - lv.variants[b].metrics.not_out.mean)
       || (lv.variants[a].metrics.avg_total_s.mean - lv.variants[b].metrics.avg_total_s.mean));
   const before = lv.variants.before.metrics;
