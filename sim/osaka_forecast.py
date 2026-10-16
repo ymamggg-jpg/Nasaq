@@ -1,4 +1,4 @@
-"""Stage 3: forecast tomorrow's visitors from real Expo 2025 Osaka data (settings fixed in CLAUDE.md first).
+"""Stage 3: forecast tomorrow's visitors from real Expo 2025 Osaka data (settings fixed before running).
 
 Reads data/expo2025_osaka_daily.csv, writes data/osaka_forecast_test.csv and data/web/osaka.json.
 Usage: python sim/osaka_forecast.py
